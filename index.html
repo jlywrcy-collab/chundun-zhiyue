@@ -1931,7 +1931,7 @@ function renderStats() {
   if (!currentId) return;
   const msgs = sessions[currentId] ? sessions[currentId].messages : [];
   let total = 0, userC = 0, aiC = 0;
-  msgs.forEach(m => { total += m.content.length; if (m.role === 'user') userC += m.content.length; else aiC += m.content.length; });
+  msgs.forEach(m => { const L = (m.content == null ? 0 : String(m.content).length); total += L; if (m.role === 'user') userC += L; else aiC += L; });
   const est = Math.round(total * 0.7 + (buildSystem(currentMode) || '').length * 0.7);
   const pct = Math.min(100, Math.round(est / 60000 * 100));
   const barColor = pct > 85 ? 'var(--danger)' : pct > 60 ? 'var(--gold)' : 'var(--accent)';
@@ -1958,7 +1958,7 @@ function updateCtxBar() {
   if (!wrap) return;
   const msgs = sessions[currentId] ? sessions[currentId].messages : [];
   let total = 0;
-  msgs.slice(-40).forEach(m => total += m.content.length);
+  msgs.slice(-40).forEach(m => total += (m.content == null ? 0 : String(m.content).length));
   const est = Math.round(total * 0.7 + (buildSystem(currentMode) || '').length * 0.7);
   const pct = Math.min(100, Math.round(est / 60000 * 100));
   if (pct < 4) { wrap.classList.remove('show'); return; }
@@ -2282,10 +2282,11 @@ function doSearch() {
   let html = '<div style="color:var(--dim);margin-bottom:8px;">找到 ' + hits.length + ' 条：</div>';
   hits.forEach(function(h) {
     const who = h.m.role === 'user' ? '你' : assistantName();
-    const snippet = h.m.content.length > 120 ? h.m.content.slice(0, 120) + '…' : h.m.content;
+    const snippet = (h.m.content == null ? '' : String(h.m.content));
+    const snip = snippet.length > 120 ? snippet.slice(0, 120) + '…' : snippet;
     html += '<div class="search-item" onclick="jumpToMsg(' + h.i + ')">'
       + '<div style="color:' + (h.m.role === 'user' ? 'var(--accent)' : 'var(--gold)') + ';font-weight:bold;font-size:12px;margin-bottom:3px;">' + who + ' · 第' + (h.i + 1) + '条</div>'
-      + '<div style="color:var(--txt);">' + escapeHtml(snippet) + '</div></div>';
+      + '<div style="color:var(--txt);">' + escapeHtml(snip) + '</div></div>';
   });
   box.innerHTML = html;
 }
