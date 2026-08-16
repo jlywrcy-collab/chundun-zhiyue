@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b1220">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="霁月之旅">
 <title>霁月之旅 · 托雷基亚×江霁月 同人写作台</title>
 <style>:root {
   --bg: #0b1220; --bg2: #101a2e; --bg3: #16233c;
@@ -233,6 +240,7 @@ body {
   <button onclick="togglePanel('libPanel')">📖 资料</button>
   <button onclick="togglePanel('searchPanel', true)">🔍 搜索</button>
   <button onclick="openSaved()">⭐ 素材</button>
+  <button onclick="quickCloudBackup()" title="一键备份到 GitHub 私有仓库">☁️ 备份</button>
   <button onclick="showIdea()">🎴 灵感</button>
   <button onclick="insertQuote()">🗯 台词</button>
   <select id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定">
@@ -351,6 +359,14 @@ body {
       <label for="backupInput" style="flex:1;background:var(--bg);border:1px dashed var(--line);color:var(--dim);border-radius:8px;padding:8px 12px;font-size:13px;text-align:center;cursor:pointer;">📥 导入备份（选 .json 文件）</label>
       <input type="file" id="backupInput" accept=".json" style="display:none" onchange="importBackup(this)">
     </div>
+    <label>☁️ 云备份（存到你 GitHub 的私有仓库，永不丢失）</label>
+    <input id="setGitToken" type="password" placeholder="GitHub Token（可选，用于云备份；建议用权限小的 token）">
+    <div class="btn-row">
+      <button onclick="cloudBackup()" style="background:var(--accent);color:#fff;border-color:var(--accent);">☁️ 立即备份到云端</button>
+      <button onclick="cloudRestore()">🔄 从云端恢复</button>
+      <button onclick="cloudList()">📋 云端备份列表</button>
+    </div>
+    <div style="font-size:11px;color:var(--dim);margin-top:4px;">☁️ 云备份把全部数据上传到你的 GitHub 私有仓库（默认 jlywrcy-collab/chundun-backup），换电脑/清浏览器都能找回。Token 获取：GitHub → Settings → Developer settings → Personal access tokens → 勾 repo 权限。</div>
     <div class="btn-row">
       <button class="primary" onclick="saveSettings()">保存</button>
       <button onclick="closeSettings()">关闭</button>
@@ -577,6 +593,8 @@ let savedItems = JSON.parse(localStorage.getItem('cm_saved') || '[]');
 // 设定卡：name -> { persona, presets:{name:content}, mode }
 let charCards = JSON.parse(localStorage.getItem('cm_charcards') || '{}');
 let activeCard = localStorage.getItem('cm_actcard') || '';
+// GitHub Token（云备份用）
+let gitToken = localStorage.getItem('cm_gittoken') || '';
 
 /* --- 提示词注入系统状态 --- */
 let presets = JSON.parse(localStorage.getItem('cm_presets') || '{}');
@@ -609,6 +627,70 @@ const SYSTEM_SEED = `你是一位擅长撰写「混沌之月」（托雷基亚 �
 7. 篇幅控制：回复长度以用户提示词/额外要求中说明的篇幅为准（如「写 500 字」「一段」「一章」）；未说明时给出自然完整的一段或一小节，不刻意凑字数，也不过于简短。
 【知识库注入规则】下方【设定】部分的内容会在相关话题出现时自动注入，写作时严格遵守，不要与设定冲突。`;
 
+/* ---------- 存储层：IndexedDB 大容量优先，回退 localStorage ---------- */
+const Storage = (function(){
+  let db = null;
+  const dbName = 'chundun-storage';
+  const storeName = 'kv';
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      try {
+        if (!('indexedDB' in window)) return reject(new Error('no indexedDB'));
+        const req = indexedDB.open(dbName, 1);
+        req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains(storeName)) req.result.createObjectStore(storeName); };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      } catch(e) { reject(e); }
+    });
+  }
+  async function getDB() {
+    if (db) return db;
+    db = await openDB();
+    return db;
+  }
+  return {
+    async setItem(key, value) {
+      try {
+        const d = await getDB();
+        return new Promise((resolve, reject) => {
+          const tx = d.transaction(storeName, 'readwrite');
+          tx.objectStore(storeName).put(value, key);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      } catch(e) {
+        try { localStorage.setItem(key, value); } catch(e2) {}
+      }
+    },
+    async getItem(key) {
+      try {
+        const d = await getDB();
+        return new Promise((resolve, reject) => {
+          const tx = d.transaction(storeName, 'readonly');
+          const req = tx.objectStore(storeName).get(key);
+          req.onsuccess = () => resolve(req.result !== undefined ? req.result : null);
+          req.onerror = () => reject(req.error);
+        });
+      } catch(e) {
+        try { return localStorage.getItem(key); } catch(e2) { return null; }
+      }
+    },
+    async removeItem(key) {
+      try {
+        const d = await getDB();
+        return new Promise((resolve, reject) => {
+          const tx = d.transaction(storeName, 'readwrite');
+          tx.objectStore(storeName).delete(key);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+      } catch(e) {
+        try { localStorage.removeItem(key); } catch(e2) {}
+      }
+    }
+  };
+})();
+
 /* ---------- 初始化 ---------- */
 function setTheme(t) {
   theme = t || 'default';
@@ -622,21 +704,55 @@ function init() {
   const sel = document.getElementById('themeSel');
   if (sel) sel.value = theme;
   document.getElementById('apiKey').value = apiKey;
+  let loaded = false;
   try { sessions = JSON.parse(localStorage.getItem('cm_sessions') || '{}'); } catch(e){ sessions = {}; }
-  // 兼容旧数据：补全会话新字段
-  Object.values(sessions).forEach(s => { if (s.tags === undefined) s.tags = []; if (s.anchor === undefined) s.anchor = -1; if (s.presets === undefined) s.presets = {}; });
-  if (!Object.keys(sessions).length) newSession();
-  else { currentId = Object.keys(sessions)[0]; renderSessionList(); renderChat(); }
-  currentMode = (sessions[currentId] && sessions[currentId].mode) || 'write';
-  setMode(currentMode);
-  const us = document.getElementById('universeSel');
-  if (us) us.value = universe;
-  renderDraftBar(); renderPresetBar(); renderCharBar(); renderCardTag(); renderNav();
+  loaded = Object.keys(sessions).length > 0;
+  (async () => {
+    try {
+      const big = await Storage.getItem('cm_sessions');
+      if (big) {
+        const parsed = JSON.parse(big);
+        const cnt = o => Object.values(o).reduce((n, s) => n + (s.messages ? s.messages.length : 0), 0);
+        if (cnt(parsed) >= cnt(sessions)) { sessions = parsed; loaded = true; }
+      }
+    } catch(e) {}
+    // 兼容旧数据：补全会话新字段
+    Object.values(sessions).forEach(s => { if (s.tags === undefined) s.tags = []; if (s.anchor === undefined) s.anchor = -1; if (s.presets === undefined) s.presets = {}; });
+    if (!Object.keys(sessions).length) newSession();
+    else { currentId = Object.keys(sessions)[0]; renderSessionList(); renderChat(); }
+    currentMode = (sessions[currentId] && sessions[currentId].mode) || 'write';
+    setMode(currentMode);
+    const us = document.getElementById('universeSel');
+    if (us) us.value = universe;
+    renderDraftBar(); renderPresetBar(); renderCharBar(); renderCardTag(); renderNav();
+  })();
+  if (loaded) {
+    Object.values(sessions).forEach(s => { if (s.tags === undefined) s.tags = []; if (s.anchor === undefined) s.anchor = -1; if (s.presets === undefined) s.presets = {}; });
+    currentId = Object.keys(sessions)[0]; renderSessionList(); renderChat();
+    currentMode = (sessions[currentId] && sessions[currentId].mode) || 'write';
+    setMode(currentMode);
+    const us = document.getElementById('universeSel');
+    if (us) us.value = universe;
+    renderDraftBar(); renderPresetBar(); renderCharBar(); renderCardTag(); renderNav();
+  }
+  // 注册 Service Worker（PWA）
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+  // 云备份提醒
+  try {
+    const last = parseInt(localStorage.getItem('cm_lastcloud') || '0');
+    if (last && (Date.now() - last > 7 * 24 * 3600 * 1000)) {
+      setTimeout(function(){ toast('⏰ 距离上次云备份已超过 7 天，记得点「☁️ 云备份」哦'); }, 1500);
+    }
+  } catch(e){}
   toast('欢迎回来。愿月光落在你们身上。');
 }
 
 function saveAll() {
-  localStorage.setItem('cm_sessions', JSON.stringify(sessions));
+  const sessionsJson = JSON.stringify(sessions);
+  localStorage.setItem('cm_sessions', sessionsJson);
+  Storage.setItem('cm_sessions', sessionsJson);
   localStorage.setItem('cm_apiKey', apiKey);
   localStorage.setItem('cm_model', model);
   localStorage.setItem('cm_temp', temp);
@@ -653,6 +769,7 @@ function saveAll() {
   localStorage.setItem('cm_saved', JSON.stringify(savedItems));
   localStorage.setItem('cm_charcards', JSON.stringify(charCards));
   localStorage.setItem('cm_actcard', activeCard);
+  localStorage.setItem('cm_gittoken', gitToken);
 }
 
 function newSession() {
@@ -1346,6 +1463,7 @@ function openSettings() {
   document.getElementById('setPacks').value = JSON.stringify(stylePacks, null, 2);
   document.getElementById('setCards').value = JSON.stringify(charCards, null, 2);
   document.getElementById('setAutoTitle').checked = autoTitle;
+  document.getElementById('setGitToken').value = gitToken;
   document.getElementById('overlay').classList.add('show');
 }
 function closeSettings() { document.getElementById('overlay').classList.remove('show'); }
@@ -1374,6 +1492,7 @@ function saveSettings() {
     if (c && typeof c === 'object') charCards = c;
   } catch (e) { toast('设定卡 JSON 格式有误：' + e.message); }
   autoTitle = document.getElementById('setAutoTitle').checked;
+  gitToken = document.getElementById('setGitToken').value.trim();
   document.getElementById('apiKey').value = apiKey;
   saveAll();
   renderPresetBar(); renderPackTag(); renderCardTag(); renderNav();
@@ -1445,6 +1564,125 @@ function importBackup(input) {
     input.value = '';
   };
   reader.readAsText(file, 'utf-8');
+}
+
+/* ---------- ☁️ 云备份（GitHub 私有仓库） ---------- */
+const CLOUD_REPO = 'jlywrcy-collab/chundun-backup'; // 云备份私有仓库
+function buildBackupData() {
+  return {
+    app: '混沌之月写作台',
+    version: 2,
+    time: new Date().toISOString(),
+    sessions, apiKey, model, temp, persona, presets, stylePacks, activePack,
+    goalWords, dualMode, styleProfile, universe, theme, autoTitle, savedItems, charCards, activeCard
+  };
+}
+async function ghApi(method, path, body) {
+  const tk = gitToken || (document.getElementById('setGitToken') && document.getElementById('setGitToken').value.trim());
+  if (!tk) throw new Error('请先在 ⚙ 设置里填写 GitHub Token');
+  const resp = await fetch('https://api.github.com' + path, {
+    method: method,
+    headers: {
+      'Authorization': 'token ' + tk,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json',
+      'User-Agent': 'chundun-writing-desk'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!resp.ok) {
+    let msg = 'GitHub API ' + resp.status;
+    try { const j = await resp.json(); if (j.message) msg += ': ' + j.message; } catch(e) {}
+    throw new Error(msg);
+  }
+  return resp.status === 204 ? null : resp.json();
+}
+async function cloudBackup() {
+  try {
+    if (!gitToken && document.getElementById('setGitToken')) gitToken = document.getElementById('setGitToken').value.trim();
+    if (!gitToken) { toast('请先在 ⚙ 设置里填 GitHub Token'); openSettings(); return; }
+    toast('☁️ 正在上传备份…');
+    const data = buildBackupData();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const name = 'backup-' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19) + '.json';
+    let created = false;
+    try {
+      await ghApi('GET', '/repos/' + CLOUD_REPO);
+    } catch (e) {
+      if (e.message.includes('404')) {
+        try {
+          await ghApi('POST', '/user/repos', { name: CLOUD_REPO.split('/')[1], private: true, auto_init: true, description: '混沌之月写作台云备份（自动生成）' });
+          created = true;
+        } catch (e2) { throw new Error('云端仓库不存在且自动创建失败：' + e2.message); }
+      } else throw e;
+    }
+    await ghApi('PUT', '/repos/' + CLOUD_REPO + '/contents/' + name, {
+      message: '自动备份 ' + new Date().toLocaleString('zh-CN'),
+      content: content
+    });
+    localStorage.setItem('cm_lastcloud', Date.now());
+    toast('☁️ 备份成功：' + name);
+  } catch (e) {
+    toast('☁️ 备份失败：' + e.message);
+  }
+}
+async function cloudList() {
+  try {
+    if (!gitToken) { toast('请先在 ⚙ 设置里填 GitHub Token'); openSettings(); return; }
+    const files = await ghApi('GET', '/repos/' + CLOUD_REPO + '/contents/');
+    if (!Array.isArray(files) || !files.length) { toast('云端还没有备份'); return; }
+    const list = files.filter(f => f.name.endsWith('.json')).sort((a, b) => b.name.localeCompare(a.name));
+    if (!list.length) { toast('云端还没有备份'); return; }
+    const label = prompt('选择要恢复的备份（输入序号）：\n' + list.map((f, i) => (i + 1) + '. ' + f.name).join('\n'));
+    if (label === null) return;
+    const idx = parseInt(label.trim()) - 1;
+    if (isNaN(idx) || idx < 0 || idx >= list.length) { toast('序号无效'); return; }
+    await doCloudRestore(list[idx].name);
+  } catch (e) {
+    toast('☁️ 读取备份列表失败：' + e.message);
+  }
+}
+async function doCloudRestore(fileName) {
+  try {
+    if (!confirm('从云端恢复将覆盖当前所有数据，确定继续？')) return;
+    toast('☁️ 正在下载备份…');
+    const meta = await ghApi('GET', '/repos/' + CLOUD_REPO + '/contents/' + fileName);
+    const jsonStr = decodeURIComponent(escape(atob(meta.content)));
+    const d = JSON.parse(jsonStr);
+    if (!d || !d.sessions) throw new Error('备份文件格式不正确');
+    sessions = d.sessions || {};
+    if (typeof d.apiKey === 'string') apiKey = d.apiKey;
+    if (d.model) model = d.model;
+    if (typeof d.temp === 'number') temp = d.temp;
+    if (typeof d.persona === 'string') persona = d.persona;
+    if (d.presets) presets = d.presets;
+    if (d.stylePacks) stylePacks = d.stylePacks;
+    if (typeof d.activePack === 'string') activePack = d.activePack;
+    if (typeof d.goalWords === 'number') goalWords = d.goalWords;
+    if (typeof d.dualMode === 'boolean') dualMode = d.dualMode;
+    if (typeof d.styleProfile === 'string') styleProfile = d.styleProfile;
+    if (typeof d.universe === 'string') universe = d.universe;
+    if (typeof d.theme === 'string') theme = d.theme;
+    if (typeof d.autoTitle === 'boolean') autoTitle = d.autoTitle;
+    if (Array.isArray(d.savedItems)) savedItems = d.savedItems;
+    if (d.charCards) charCards = d.charCards;
+    if (typeof d.activeCard === 'string') activeCard = d.activeCard;
+    saveAll();
+    currentId = Object.keys(sessions)[0] || null;
+    document.getElementById('apiKey').value = apiKey;
+    document.documentElement.setAttribute('data-theme', theme);
+    const sel = document.getElementById('themeSel'); if (sel) sel.value = theme;
+    const us = document.getElementById('universeSel'); if (us) us.value = universe;
+    renderSessionList(); renderPresetBar(); renderCharBar(); renderCardTag();
+    if (currentId) { currentMode = sessions[currentId].mode || 'write'; setMode(currentMode); }
+    else newSession();
+    toast('✅ 云端备份已恢复');
+  } catch (e) {
+    toast('☁️ 恢复失败：' + e.message);
+  }
+}
+async function quickCloudBackup() {
+  await cloudBackup();
 }
 
 /* ---------- 导出当前会话为 TXT ---------- */
