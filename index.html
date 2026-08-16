@@ -181,6 +181,9 @@ body {
   #main { position: relative; }
   .msg { max-width: 94%; }
   #apiKey { width: 120px; }
+  /* 侧栏遮罩：打开时盖住聊天区，点击关闭 */
+  #sideMask { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 49; display: none; }
+  #sidebar.open ~ #sideMask { display: block; }
 }
 /* ---------- 消息工具栏（复制/编辑/星标/分支/重写） ---------- */
 .msg .msg-tools { margin-top: 6px; display: flex; gap: 6px; opacity: .75; transition: opacity .2s; flex-wrap: wrap; }
@@ -285,12 +288,12 @@ body.compact #uploadBar { display: none !important; }
   <button onclick="quickCloudBackup()" title="一键备份到 GitHub 私有仓库">☁️ 备份</button>
   <button class="tb-hide-m" onclick="showIdea()">🎴 灵感</button>
   <button class="tb-hide-m" onclick="insertQuote()">🗯 台词</button>
-  <select class="tb-hide-m" id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定">
+  <select id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定" style="max-width:92px;font-size:11px;">
     <option value="canon">🦋 原著线</option>
     <option value="he">🦋 HE线</option>
     <option value="alt">🦋 平行线</option>
   </select>
-  <select class="tb-hide-m" id="themeSel" onchange="setTheme(this.value)" title="切换主题" style="max-width:130px;">
+  <select id="themeSel" onchange="setTheme(this.value)" title="切换主题" style="max-width:120px;font-size:11px;">
     <option value="default">🌙 霁月紫夜</option>
     <option value="nebula">🪐 星夜紫黑</option>
     <option value="paper">📜 纸墨古风</option>
@@ -317,6 +320,7 @@ body.compact #uploadBar { display: none !important; }
       <button onclick="toggleSidebar()">收起</button>
     </div>
   </div>
+  <div id="sideMask" onclick="toggleSidebar(false)"></div>
 
   <div id="chatArea">
     <div id="starBar"><div class="star-title">⭐ 已星标消息（点击跳转）</div></div>
