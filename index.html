@@ -181,9 +181,8 @@ body {
   #main { position: relative; }
   .msg { max-width: 94%; }
   #apiKey { width: 120px; }
-  /* 侧栏遮罩：打开时盖住聊天区，点击关闭 */
+  /* 侧栏遮罩：打开时盖住聊天区，点击关闭（显示由 JS toggleSidebar 控制） */
   #sideMask { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 49; display: none; }
-  #sidebar.open ~ #sideMask { display: block; }
 }
 /* ---------- 消息工具栏（复制/编辑/星标/分支/重写） ---------- */
 .msg .msg-tools { margin-top: 6px; display: flex; gap: 6px; opacity: .75; transition: opacity .2s; flex-wrap: wrap; }
@@ -887,6 +886,8 @@ function toggleSidebar(force) {
   const s = document.getElementById('sidebar');
   const open = force !== undefined ? force : !s.classList.contains('open');
   s.classList.toggle('open', open);
+  const mask = document.getElementById('sideMask');
+  if (mask) mask.style.display = (open && window.innerWidth <= 700) ? 'block' : 'none';
 }
 
 /* ---------- 渲染 ---------- */
@@ -1090,7 +1091,7 @@ function renderChat() {
         m.content = val;
         saveAll();
         renderChat();
-        send(val); // 基于修改后的内容重新发送
+        send(val, true); // 已就地更新本条消息，fromRegen=true 避免重复追加用户消息
       });
       wrap.querySelector('.save-only').addEventListener('click', () => {
         const val = ta.value;
