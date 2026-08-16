@@ -1343,7 +1343,8 @@ async function send(promptArg, fromRegen) {
       thinkBody.textContent = think;
       box.scrollTop = box.scrollHeight;
     };
-    while (true) {
+    let streamDone = false;
+    while (!streamDone) {
       const { done, value } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
@@ -1353,7 +1354,7 @@ async function send(promptArg, fromRegen) {
         buffer = buffer.slice(idx + 1);
         if (!line.startsWith('data:')) continue;
         const data = line.slice(5).trim();
-        if (data === '[DONE]') { reader.cancel(); done = true; break; }
+        if (data === '[DONE]') { reader.cancel(); streamDone = true; break; }
         try {
           const j = JSON.parse(data);
           const delta = j.choices && j.choices[0] && j.choices[0].delta;
@@ -1367,7 +1368,7 @@ async function send(promptArg, fromRegen) {
           }
         } catch (e) { /* 忽略不完整 JSON 分片 */ }
       }
-      if (done) break;
+      if (streamDone) break;
     }
     if (buffer.length) {
       const line = buffer.trim();
