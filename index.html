@@ -227,6 +227,48 @@ body {
 #statsPanel .stat-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; color: var(--txt); }
 #statsPanel .stat-row b { color: var(--txt); }
 #statsPanel .stat-note { font-size: 12px; color: var(--dim); margin-top: 8px; }
+/* ---------- 手机端/紧凑模式布局 ---------- */
+#iconBar { display: none; }
+.ic-btn { display: flex; flex-direction: column; align-items: center; gap: 1px; background: none; border: none; color: var(--dim); cursor: pointer; padding: 2px 6px; font-size: 16px; border-radius: 6px; }
+.ic-btn span { font-size: 9px; line-height: 1; }
+.ic-btn.active { color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 760px) {
+  #topbar { flex-wrap: nowrap; overflow-x: auto; gap: 4px; padding: 5px 8px; -webkit-overflow-scrolling: touch; }
+  #topbar .logo small { display: none; }
+  #topbar .logo { font-size: 13px; white-space: nowrap; }
+  .tb-hide-m { display: none !important; }
+  #compactBtn { display: none !important; }
+  #topbar button { padding: 5px 8px; font-size: 12px; white-space: nowrap; flex: none; }
+  #themeSel, #universeSel { max-width: 88px; font-size: 11px; }
+  #apiKey { display: none; }
+  #modeBar { gap: 4px; flex-wrap: wrap; }
+  #modeBar .mode-btn { padding: 4px 10px; font-size: 12px; }
+  #inputArea { padding: 6px 8px; }
+  #chatBox { padding: 10px; }
+  .msg { max-width: 92%; }
+  #navBar { font-size: 11px; gap: 4px; margin-bottom: 4px; }
+  #iconBar { display: flex !important; gap: 2px; margin-bottom: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #iconBar .ic-btn { flex: none; }
+  #modeBar, #presetBar, #charBar, #extraRow, #uploadBar { display: none !important; }
+  #modeBar.ic-open, #presetBar.ic-open, #charBar.ic-open, #extraRow.ic-open, #uploadBar.ic-open { display: flex !important; }
+  #uploadBar { display: none !important; }
+  #draftBar { margin-bottom: 4px; font-size: 11px; }
+}
+/* 紧凑模式（PC 可切换） */
+body.compact #topbar { flex-wrap: nowrap; overflow-x: auto; gap: 4px; -webkit-overflow-scrolling: touch; }
+body.compact #topbar .logo small { display: none; }
+body.compact .tb-hide-m { display: none !important; }
+body.compact #themeSel, body.compact #universeSel { max-width: 88px; font-size: 11px; }
+body.compact #apiKey { display: none; }
+body.compact #modeBar { gap: 4px; flex-wrap: wrap; }
+body.compact #modeBar .mode-btn { padding: 4px 10px; font-size: 12px; }
+body.compact #inputArea { padding: 6px 8px; }
+body.compact #chatBox { padding: 10px; }
+body.compact .msg { max-width: 92%; }
+body.compact #iconBar { display: flex !important; gap: 2px; margin-bottom: 4px; overflow-x: auto; }
+body.compact #modeBar, body.compact #presetBar, body.compact #charBar, body.compact #extraRow, body.compact #uploadBar { display: none !important; }
+body.compact #modeBar.ic-open, body.compact #presetBar.ic-open, body.compact #charBar.ic-open, body.compact #extraRow.ic-open, body.compact #uploadBar.ic-open { display: flex !important; }
+body.compact #uploadBar { display: none !important; }
 </style>
 </head>
 <body>
@@ -239,25 +281,26 @@ body {
   <button onclick="newSession()">＋ 新对话</button>
   <button onclick="togglePanel('libPanel')">📖 资料</button>
   <button onclick="togglePanel('searchPanel', true)">🔍 搜索</button>
-  <button onclick="openSaved()">⭐ 素材</button>
+  <button class="tb-hide-m" onclick="openSaved()">⭐ 素材</button>
   <button onclick="quickCloudBackup()" title="一键备份到 GitHub 私有仓库">☁️ 备份</button>
-  <button onclick="showIdea()">🎴 灵感</button>
-  <button onclick="insertQuote()">🗯 台词</button>
-  <select id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定">
+  <button class="tb-hide-m" onclick="showIdea()">🎴 灵感</button>
+  <button class="tb-hide-m" onclick="insertQuote()">🗯 台词</button>
+  <select class="tb-hide-m" id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定">
     <option value="canon">🦋 原著线</option>
     <option value="he">🦋 HE线</option>
     <option value="alt">🦋 平行线</option>
   </select>
-  <select id="themeSel" onchange="setTheme(this.value)" title="切换主题" style="max-width:130px;">
+  <select class="tb-hide-m" id="themeSel" onchange="setTheme(this.value)" title="切换主题" style="max-width:130px;">
     <option value="default">🌙 霁月紫夜</option>
     <option value="nebula">🪐 星夜紫黑</option>
     <option value="paper">📜 纸墨古风</option>
     <option value="mist">🌫️ 晨雾蓝</option>
   </select>
-  <button onclick="showStats()">📊 全书</button>
-  <button onclick="toggleStats()">📈 统计</button>
-  <button onclick="toggleExportMenu()">📤 导出</button>
+  <button class="tb-hide-m" onclick="showStats()">📊 全书</button>
+  <button class="tb-hide-m" onclick="toggleStats()">📈 统计</button>
+  <button class="tb-hide-m" onclick="toggleExportMenu()">📤 导出</button>
   <button onclick="openSettings()">⚙ 设置</button>
+  <button id="compactBtn" onclick="toggleCompact()" title="切换紧凑/完整布局">⤢ 紧凑</button>
   <input id="apiKey" type="password" placeholder="DeepSeek API Key (sk-...)" onchange="saveKey()">
 </div>
 
@@ -289,15 +332,23 @@ body {
         </span>
       </div>
       <div id="ctxBarWrap"><div id="ctxBar"><div class="fill"></div></div><div id="ctxBarText"></div></div>
+      <!-- 手机端底部分栏图标条 -->
+      <div id="iconBar">
+        <button class="ic-btn" data-panel="modeBar" onclick="toggleIconPanel('modeBar', this)">🎭<span>模式</span></button>
+        <button class="ic-btn" data-panel="presetBar" onclick="toggleIconPanel('presetBar', this)">🎛<span>提示词</span></button>
+        <button class="ic-btn" data-panel="charBar" onclick="toggleIconPanel('charBar', this)">📖<span>人物卡</span></button>
+        <button class="ic-btn" data-panel="extraRow" onclick="toggleIconPanel('extraRow', this)">📝<span>要求</span></button>
+        <button class="ic-btn" data-panel="uploadBar" onclick="toggleIconPanel('uploadBar', this)">📄<span>文稿</span></button>
+      </div>
       <div id="draftBar"></div>
       <div id="modeBar">
         <button class="mode-btn" data-mode="write" onclick="setMode('write')">✍️ 续写</button>
         <button class="mode-btn" data-mode="polish" onclick="setMode('polish')">✨ 润色</button>
-        <button style="margin-left:auto;background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="undoLast()" title="撤回上一轮">↩ 撤回</button>
-        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="regenLast()" title="用同一个要求重新生成">🔄 重掷</button>
-        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openCardBar()">🎭 设定卡</button>
-        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openPackBar()">📦 风格包</button>
-        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="checkOOC()">🧹 人设检查</button>
+        <button class="tb-hide-m" style="margin-left:auto;background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="undoLast()" title="撤回上一轮">↩ 撤回</button>
+        <button class="tb-hide-m" style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="regenLast()" title="用同一个要求重新生成">🔄 重掷</button>
+        <button class="tb-hide-m" style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openCardBar()">🎭 设定卡</button>
+        <button class="tb-hide-m" style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openPackBar()">📦 风格包</button>
+        <button class="tb-hide-m" style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="checkOOC()">🧹 人设检查</button>
       </div>
       <div id="presetBar"></div>
       <div id="charBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
@@ -305,7 +356,7 @@ body {
         <textarea id="prompt" placeholder="✍️续写：粘贴你的文段，或上传 txt 文稿后让我接着写；✨润色：粘贴要润色的片段……" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"></textarea>
         <button id="sendBtn" onclick="onSendClick()">发送</button>
       </div>
-      <div id="extraRow">
+      <div id="extraRow" style="display:flex;gap:8px;align-items:center;margin-top:6px;">
         <input id="extraPrompt" placeholder="📝 本条额外要求（只影响这次回复，发完自动清空）">
         <span id="cardTag" style="font-size:12px;color:var(--card);white-space:nowrap;"></span>
         <span id="packTag" style="font-size:12px;color:var(--gold);white-space:nowrap;"></span>
@@ -595,6 +646,8 @@ let charCards = JSON.parse(localStorage.getItem('cm_charcards') || '{}');
 let activeCard = localStorage.getItem('cm_actcard') || '';
 // GitHub Token（云备份用）
 let gitToken = localStorage.getItem('cm_gittoken') || '';
+// 紧凑模式（PC 端可切换）
+let compactMode = localStorage.getItem('cm_compact') === '1';
 
 /* --- 提示词注入系统状态 --- */
 let presets = JSON.parse(localStorage.getItem('cm_presets') || '{}');
@@ -699,11 +752,37 @@ function setTheme(t) {
   if (sel) sel.value = theme;
   saveAll();
 }
+// 紧凑/完整布局切换（PC 端）
+function applyCompact() {
+  document.body.classList.toggle('compact', compactMode);
+  const btn = document.getElementById('compactBtn');
+  if (btn) btn.textContent = compactMode ? '⤢ 完整' : '⤢ 紧凑';
+}
+function toggleCompact() {
+  compactMode = !compactMode;
+  applyCompact();
+  saveAll();
+  toast(compactMode ? '已切换紧凑模式（顶栏/输入区精简）' : '已恢复完整布局');
+}
+// 底部分栏图标条：点击图标展开/收起对应面板（互斥）
+function toggleIconPanel(id, btn) {
+  const panel = document.getElementById(id);
+  if (!panel) return;
+  const isOpen = panel.classList.contains('ic-open');
+  document.querySelectorAll('#modeBar,#presetBar,#charBar,#extraRow,#uploadBar').forEach(p => p.classList.remove('ic-open'));
+  document.querySelectorAll('.ic-btn').forEach(b => b.classList.remove('active'));
+  if (!isOpen) {
+    panel.classList.add('ic-open');
+    if (btn) btn.classList.add('active');
+    if (id === 'extraRow') setTimeout(function(){ document.getElementById('extraPrompt').focus(); }, 50);
+  }
+}
 function init() {
   document.documentElement.setAttribute('data-theme', theme);
   const sel = document.getElementById('themeSel');
   if (sel) sel.value = theme;
   document.getElementById('apiKey').value = apiKey;
+  applyCompact();
   let loaded = false;
   try { sessions = JSON.parse(localStorage.getItem('cm_sessions') || '{}'); } catch(e){ sessions = {}; }
   loaded = Object.keys(sessions).length > 0;
@@ -770,6 +849,7 @@ function saveAll() {
   localStorage.setItem('cm_charcards', JSON.stringify(charCards));
   localStorage.setItem('cm_actcard', activeCard);
   localStorage.setItem('cm_gittoken', gitToken);
+  localStorage.setItem('cm_compact', compactMode ? '1' : '0');
 }
 
 function newSession() {
