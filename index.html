@@ -4,12 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>霁月之旅 · 托雷基亚×江霁月 同人写作台</title>
-<style>
-:root {
+<style>:root {
   --bg: #0b1220; --bg2: #101a2e; --bg3: #16233c;
   --line: #26395c; --txt: #dbe6f5; --dim: #8fa5c5;
   --accent: #5a9cf8; --accent2: #7d5fd3; --gold: #d9b45b;
   --ok: #5cb877; --warn: #e3c070;
+  --danger: #e0574f; --bar: #22314d; --accent-soft: #1a3566; --card: #7d5fd3;
+}
+/* 主题：霁月紫夜（默认） */html[data-theme="default"] {
+  --bg: #0b1220; --bg2: #101a2e; --bg3: #16233c;
+  --line: #26395c; --txt: #dbe6f5; --dim: #8fa5c5;
+  --accent: #5a9cf8; --accent2: #7d5fd3; --gold: #d9b45b;
+  --ok: #5cb877; --warn: #e3c070;
+  --danger: #e0574f; --bar: #22314d; --accent-soft: #1a3566; --card: #7d5fd3;
+}
+/* 主题：星夜紫黑 */html[data-theme="nebula"] {
+  --bg: #100c1e; --bg2: #181130; --bg3: #241a4a;
+  --line: #3a2e63; --txt: #e6dcf7; --dim: #9a8cc9;
+  --accent: #8f6ef0; --accent2: #c35fd3; --gold: #c9a86a;
+  --ok: #62c08a; --warn: #e3c070;
+  --danger: #ef6a5e; --bar: #241a4a; --accent-soft: #33265e; --card: #a58cf0;
+}
+/* 主题：纸墨古风（浅色） */html[data-theme="paper"] {
+  --bg: #f6f0e3; --bg2: #efe6d2; --bg3: #e5d9be;
+  --line: #cdbb92; --txt: #2c2619; --dim: #7d7157;
+  --accent: #a83a2f; --accent2: #7d5fd3; --gold: #8a6d2f;
+  --ok: #5c8a5c; --warn: #b08a3a;
+  --danger: #c0483a; --bar: #ddd0b2; --accent-soft: #f0e2c8; --card: #8a6d2f;
+}
+/* 主题：晨雾蓝（浅色） */html[data-theme="mist"] {
+  --bg: #eef2f6; --bg2: #e3eaf2; --bg3: #d3deeb;
+  --line: #b7c8da; --txt: #22303f; --dim: #6d7f92;
+  --accent: #3a7bbf; --accent2: #7d5fd3; --gold: #b08a3a;
+  --ok: #5c9a78; --warn: #c99b3f;
+  --danger: #d0503f; --bar: #c3d2e2; --accent-soft: #dce8f5; --card: #7a6f9a;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html,body { height: 100%; }
@@ -21,7 +49,7 @@ body {
 /* ---------- 顶栏 ---------- */
 #topbar {
   display: flex; align-items: center; gap: 8px; padding: 8px 12px;
-  background: linear-gradient(90deg, #101a2e, #141d38); border-bottom: 1px solid var(--line); flex: none;
+  background: linear-gradient(90deg, var(--bg2), var(--bg3)); border-bottom: 1px solid var(--line); flex: none;
   flex-wrap: wrap;
 }
 #topbar .logo { font-weight: 700; color: var(--accent); white-space: nowrap; font-size: 15px; }
@@ -63,7 +91,7 @@ body {
 #chatArea { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 #chatBox { flex: 1; overflow-y: auto; padding: 16px; }
 .msg { max-width: 85%; margin-bottom: 14px; padding: 10px 14px; border-radius: 12px; white-space: pre-wrap; word-break: break-word; }
-.msg.user { background: linear-gradient(135deg,#3a5bd0,#4d3f8f); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+.msg.user { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
 .msg.assistant { background: var(--bg3); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
 .msg.system { background: transparent; color: var(--dim); font-size: 12px; text-align: center; max-width: 100%; }
 .msg .name { font-weight: 700; margin-bottom: 4px; color: var(--gold); font-size: 13px; }
@@ -84,7 +112,7 @@ body {
 }
 #prompt:focus { outline: none; border-color: var(--accent); }
 #sendBtn {
-  background: linear-gradient(135deg,#5a9cf8,#7d5fd3); color: #fff; border: none; border-radius: 12px;
+  background: linear-gradient(135deg,var(--accent),var(--accent2)); color: #fff; border: none; border-radius: 12px;
   padding: 10px 18px; font-size: 15px; cursor: pointer; flex: none;
 }
 #sendBtn:disabled { opacity: .5; cursor: not-allowed; }
@@ -175,10 +203,10 @@ body {
 #ctxBarWrap { display: none; margin: 0 0 6px; }
 #ctxBarWrap.show { display: block; }
 #ctxBar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-#ctxBar .fill { height: 100%; width: 0%; background: linear-gradient(90deg,#5a9cf8,#7d5fd3); transition: width .3s; }
-#ctxBarWrap.warn #ctxBar .fill { background: #e0574f; }
+#ctxBar .fill { height: 100%; width: 0%; background: linear-gradient(90deg,var(--accent),var(--accent2)); transition: width .3s; }
+#ctxBarWrap.warn #ctxBar .fill { background: var(--danger); }
 #ctxBarText { font-size: 11px; color: var(--dim); margin-top: 3px; }
-#ctxBarWrap.warn #ctxBarText { color: #e0574f; }
+#ctxBarWrap.warn #ctxBarText { color: var(--danger); }
 /* ---------- 导出菜单 ---------- */
 #exportMenu { display: none; position: fixed; top: 46px; right: 210px; z-index: 90; background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 #exportMenu.show { display: block; }
@@ -204,12 +232,19 @@ body {
   <button onclick="newSession()">＋ 新对话</button>
   <button onclick="togglePanel('libPanel')">📖 资料</button>
   <button onclick="togglePanel('searchPanel', true)">🔍 搜索</button>
+  <button onclick="openSaved()">⭐ 素材</button>
   <button onclick="showIdea()">🎴 灵感</button>
   <button onclick="insertQuote()">🗯 台词</button>
   <select id="universeSel" onchange="setUniverse(this.value)" title="平行宇宙开关：切换时间线设定">
     <option value="canon">🦋 原著线</option>
     <option value="he">🦋 HE线</option>
     <option value="alt">🦋 平行线</option>
+  </select>
+  <select id="themeSel" onchange="setTheme(this.value)" title="切换主题" style="max-width:130px;">
+    <option value="default">🌙 霁月紫夜</option>
+    <option value="nebula">🪐 星夜紫黑</option>
+    <option value="paper">📜 纸墨古风</option>
+    <option value="mist">🌫️ 晨雾蓝</option>
   </select>
   <button onclick="showStats()">📊 全书</button>
   <button onclick="toggleStats()">📈 统计</button>
@@ -222,7 +257,7 @@ body {
 <div id="main">
   <div id="sidebar">
     <h3>💬 写作窗口</h3>
-    <select id="tagFilter" onchange="renderSessionList()" style="margin:0 8px 6px;width:calc(100% - 16px);background:#16233c;border:1px solid #26395c;color:#dbe6f5;border-radius:8px;padding:5px 8px;font-size:12px;">
+    <select id="tagFilter" onchange="renderSessionList()" style="margin:0 8px 6px;width:calc(100% - 16px);background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:5px 8px;font-size:12px;">
       <option value="">🏷 全部窗口</option>
     </select>
     <div id="sessionList"></div>
@@ -237,12 +272,12 @@ body {
     <div id="chatBox"></div>
     <div id="inputArea">
       <div id="navBar" style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;font-size:12px;">
-        <span id="stageTag" style="color:#7d5fd3;cursor:pointer;" onclick="showStageDetail()" title="点击查看当前感情线阶段设定">💞 感情线：—</span>
+        <span id="stageTag" style="color:var(--accent2);cursor:pointer;" onclick="showStageDetail()" title="点击查看当前感情线阶段设定">💞 感情线：—</span>
         <span id="anchorTag" style="display:none;color:#e3c070;cursor:pointer;" onclick="clearAnchor()" title="点击清除锚点">⛓ 已设续写锚点：第N条 ✕</span>
         <span id="goalBar" style="flex:1;display:none;align-items:center;gap:6px;min-width:160px;">
-          <span style="color:#8fa5c5;white-space:nowrap;">📏 本章进度</span>
-          <span style="flex:1;height:6px;background:#16233c;border-radius:3px;overflow:hidden;"><span id="goalFill" style="display:block;height:100%;width:0%;background:linear-gradient(90deg,#5a9cf8,#7d5fd3);transition:width .3s;"></span></span>
-          <span id="goalText" style="color:#8fa5c5;white-space:nowrap;">0/0字</span>
+          <span style="color:var(--dim);white-space:nowrap;">📏 本章进度</span>
+          <span style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><span id="goalFill" style="display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s;"></span></span>
+          <span id="goalText" style="color:var(--dim);white-space:nowrap;">0/0字</span>
         </span>
       </div>
       <div id="ctxBarWrap"><div id="ctxBar"><div class="fill"></div></div><div id="ctxBarText"></div></div>
@@ -250,18 +285,22 @@ body {
       <div id="modeBar">
         <button class="mode-btn" data-mode="write" onclick="setMode('write')">✍️ 续写</button>
         <button class="mode-btn" data-mode="polish" onclick="setMode('polish')">✨ 润色</button>
-        <button style="margin-left:auto;background:#16233c;border:1px solid #26395c;color:#8fa5c5;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="undoLast()" title="撤回上一轮">↩ 撤回</button>
-        <button style="background:#16233c;border:1px solid #26395c;color:#8fa5c5;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="regenLast()" title="用同一个要求重新生成">🔄 重掷</button>
-        <button style="background:#16233c;border:1px solid #26395c;color:#8fa5c5;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openPackBar()">📦 风格包</button>
+        <button style="margin-left:auto;background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="undoLast()" title="撤回上一轮">↩ 撤回</button>
+        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="regenLast()" title="用同一个要求重新生成">🔄 重掷</button>
+        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openCardBar()">🎭 设定卡</button>
+        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="openPackBar()">📦 风格包</button>
+        <button style="background:var(--bg3);border:1px solid var(--line);color:var(--dim);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;" onclick="checkOOC()">🧹 人设检查</button>
       </div>
       <div id="presetBar"></div>
+      <div id="charBar" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;"></div>
       <div id="inputRow">
         <textarea id="prompt" placeholder="✍️续写：粘贴你的文段，或上传 txt 文稿后让我接着写；✨润色：粘贴要润色的片段……" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"></textarea>
         <button id="sendBtn" onclick="onSendClick()">发送</button>
       </div>
       <div id="extraRow">
         <input id="extraPrompt" placeholder="📝 本条额外要求（只影响这次回复，发完自动清空）">
-        <span id="packTag" style="font-size:12px;color:#d9b45b;white-space:nowrap;"></span>
+        <span id="cardTag" style="font-size:12px;color:var(--card);white-space:nowrap;"></span>
+        <span id="packTag" style="font-size:12px;color:var(--gold);white-space:nowrap;"></span>
       </div>
       <div id="uploadBar">
         <label for="fileInput">📄 上传你的文稿（.txt）</label>
@@ -300,7 +339,18 @@ body {
     <textarea id="setPresets" placeholder="虐恋向|这一章基调偏虐恋：克制、隐忍、压抑的情愫，雾崎的深情藏在偏执之下……"></textarea>
     <label>📦 风格包管理（JSON 格式，见下方说明）</label>
     <textarea id="setPacks" placeholder='{"混沌深渊包":{"presets":{"虐恋向":"……"},"persona":"……","extraLore":[]}}'></textarea>
-    <div style="font-size:11px;color:#8fa5c5;margin-top:4px;">风格包格式：{"包名":{"presets":{"提示词名":"内容"},"persona":"女主补充设定","extraLore":[{"keys":["关键词"],"content":"注入内容"}]}}。保存后到聊天区点「📦 风格包」一键切换。</div>
+    <div style="font-size:11px;color:var(--dim);margin-top:4px;">风格包格式：{"包名":{"presets":{"提示词名":"内容"},"persona":"女主补充设定","extraLore":[{"keys":["关键词"],"content":"注入内容"}]}}。保存后到聊天区点「📦 风格包」一键切换。</div>
+    <label>🎭 设定卡管理（多套「江霁月设定+风格+模式」一键切换）</label>
+    <textarea id="setCards" placeholder='{"青梅竹马版":{"persona":"江霁月是从小认识雾崎的青梅竹马……","presets":{"甜蜜向":"……"},"mode":"write"}}'></textarea>
+    <div style="font-size:11px;color:var(--dim);margin-top:4px;">设定卡格式：{"卡名":{"persona":"女主设定","presets":{"提示词名":"内容"},"mode":"write|polish"}}。保存后到聊天区点「🎭 设定卡」一键切换。</div>
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="setAutoTitle" style="width:auto;"> 📝 自动标题（新对话根据首条消息智能起名）</label>
+    <div style="border-top:1px solid var(--line);margin:12px 0;"></div>
+    <label>💾 备份 / 恢复（所有写作窗口、设置、设定卡导出为 .json 文件）</label>
+    <div class="btn-row">
+      <button onclick="exportBackup()">💾 导出备份</button>
+      <label for="backupInput" style="flex:1;background:var(--bg);border:1px dashed var(--line);color:var(--dim);border-radius:8px;padding:8px 12px;font-size:13px;text-align:center;cursor:pointer;">📥 导入备份（选 .json 文件）</label>
+      <input type="file" id="backupInput" accept=".json" style="display:none" onchange="importBackup(this)">
+    </div>
     <div class="btn-row">
       <button class="primary" onclick="saveSettings()">保存</button>
       <button onclick="closeSettings()">关闭</button>
@@ -518,6 +568,15 @@ let dualMode = localStorage.getItem('cm_dual') === '1';                // 双版
 let styleProfile = localStorage.getItem('cm_style') || '';             // 作者风格档案
 let universe = localStorage.getItem('cm_universe') || 'canon';         // 平行宇宙：canon/he/alt
 let anchorIdx = -1;                                                    // 当前会话的续写锚点（消息索引，-1=无）
+// 主题
+let theme = localStorage.getItem('cm_theme') || 'default';
+// 自动标题开关
+let autoTitle = localStorage.getItem('cm_autotitle') !== '0';
+// 素材收藏：[{role, content, time}]
+let savedItems = JSON.parse(localStorage.getItem('cm_saved') || '[]');
+// 设定卡：name -> { persona, presets:{name:content}, mode }
+let charCards = JSON.parse(localStorage.getItem('cm_charcards') || '{}');
+let activeCard = localStorage.getItem('cm_actcard') || '';
 
 /* --- 提示词注入系统状态 --- */
 let presets = JSON.parse(localStorage.getItem('cm_presets') || '{}');
@@ -525,6 +584,18 @@ if (!presets.default) presets = { 虐恋向: '这一章基调偏虐恋：克制�
 let extraPrompt = '';
 let stylePacks = JSON.parse(localStorage.getItem('cm_stylepacks') || '{}');
 let activePack = localStorage.getItem('cm_actpack') || '';
+
+/* ---------- 人物卡速查：核心人物设定（点击激活注入） ---------- */
+const CHARACTER_CARDS = [
+  { name: '雾崎', content: `【雾崎/托雷基亚】光之国蓝族科学家，堕入混沌的奥特曼，人间体「雾崎」。外表清隽、气质疏离带笑，喜欢甜食、樱花、山茶花、棒棒糖。癫狂的好奇心、科学家的实验欲、偏执的占有欲、偶尔的脆弱与温柔；说话克制但字字有分量，不话痨、不直白甜腻。对江霁月有「观测者0917」式的痴迷与克制。未被洗白，仍认为混沌无错，只是学会克制。` },
+  { name: '江霁月', content: `【江霁月】人类研究生，外号「欧皇」，玉佩持有者，「观测者0917」。清醒、直球、外柔内刚、甜食脑袋；能接住混沌艺术家的一切试探与拉扯；是「无数宇宙中唯一的观测者灵魂」。祖传半月形翡翠玉佩可感知/吞噬/防护能量。` },
+  { name: '夏知', content: `【夏知】江霁月的挚友/娘家人线，第12卷曾「三枪审判」雾崎；是安全屋的守护者之一，对雾崎存有戒心。「判定标准是同意」（第15卷C）——安全屋结界是否向雾崎开放由江霁月或夏知同意决定。` },
+  { name: '泰迦', content: `【泰迦】雾崎与泰罗共同创造、托雷基亚亲手造出火花，第12卷当众表白并拖优幸、宗谷誉下水「三杀」江霁月的修罗场主角之一。` },
+  { name: '泰罗', content: `【泰罗】雾崎前史挚友与执念（「太阳」）。第15卷B已清算「泰罗代餐论」——勿写江霁月是泰罗替身。泰迦火花由托雷基亚所造、泰罗参与研究，「泰迦」之名二人共取。` },
+  { name: '美利花', content: `【美利花】艾欧玛普星智能机器人「美利花03」，乌拉事件后升级为「旭川美利花」；勿把她写成纯人类。` },
+  { name: '小葵', content: `【小葵】赛古梅戈尔星先遣队员（K-174），叛逃后入职伊吉斯；她的星球曾被雾崎镇压过（第8卷）。` },
+  { name: '宗谷誉', content: `【宗谷誉】第13卷天台告白献「星辰之泪」戒，雾崎目睹后无名指冰戒碎成尘埃、「守墓人」独白——修罗场多角关系的重要角色。` }
+];
 
 const SYSTEM_SEED = `你是一位擅长撰写「混沌之月」（托雷基亚 × 江霁月）BG 同人小说的专业写手。
 作品设定：托雷基亚——光之国蓝族科学家，堕入混沌的奥特曼，人间体化名「雾崎」；江霁月——人类研究生，外号「欧皇」，玉佩持有者，「观测者0917」。故事发生在现代东京与光之国交织的综漫世界。
@@ -539,7 +610,17 @@ const SYSTEM_SEED = `你是一位擅长撰写「混沌之月」（托雷基亚 �
 【知识库注入规则】下方【设定】部分的内容会在相关话题出现时自动注入，写作时严格遵守，不要与设定冲突。`;
 
 /* ---------- 初始化 ---------- */
+function setTheme(t) {
+  theme = t || 'default';
+  document.documentElement.setAttribute('data-theme', theme);
+  const sel = document.getElementById('themeSel');
+  if (sel) sel.value = theme;
+  saveAll();
+}
 function init() {
+  document.documentElement.setAttribute('data-theme', theme);
+  const sel = document.getElementById('themeSel');
+  if (sel) sel.value = theme;
   document.getElementById('apiKey').value = apiKey;
   try { sessions = JSON.parse(localStorage.getItem('cm_sessions') || '{}'); } catch(e){ sessions = {}; }
   // 兼容旧数据：补全会话新字段
@@ -550,7 +631,7 @@ function init() {
   setMode(currentMode);
   const us = document.getElementById('universeSel');
   if (us) us.value = universe;
-  renderDraftBar(); renderPresetBar(); renderNav();
+  renderDraftBar(); renderPresetBar(); renderCharBar(); renderCardTag(); renderNav();
   toast('欢迎回来。愿月光落在你们身上。');
 }
 
@@ -567,6 +648,11 @@ function saveAll() {
   localStorage.setItem('cm_dual', dualMode ? '1' : '0');
   localStorage.setItem('cm_style', styleProfile);
   localStorage.setItem('cm_universe', universe);
+  localStorage.setItem('cm_theme', theme);
+  localStorage.setItem('cm_autotitle', autoTitle ? '1' : '0');
+  localStorage.setItem('cm_saved', JSON.stringify(savedItems));
+  localStorage.setItem('cm_charcards', JSON.stringify(charCards));
+  localStorage.setItem('cm_actcard', activeCard);
 }
 
 function newSession() {
@@ -620,7 +706,7 @@ function renderSessionList() {
     if (filter && tags.indexOf(filter) < 0) return;
     const div = document.createElement('div');
     div.className = 'sess' + (id === currentId ? ' active' : '');
-    const tagHtml = tags.length ? ' <span style="color:#7d5fd3;font-size:10px;">[' + tags.map(escapeHtml).join('·') + ']</span>' : '';
+    const tagHtml = tags.length ? ' <span style="color:var(--accent2);font-size:10px;">[' + tags.map(escapeHtml).join('·') + ']</span>' : '';
     div.innerHTML = `<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;display:inline-flex;align-items:center;" onclick="switchSession('${id}')">${escapeHtml(s.title)}${tagHtml}</span>
       <span class="sess-ops">
         <button title="重命名" onclick="renameSession('${id}')">✎</button>
@@ -704,7 +790,7 @@ function renderChat() {
       const regenBtn = m.role === 'assistant' ? '<button class="regen-btn">🔄 重写</button>' : '';
       const thinkHtml = (m.role === 'assistant' && m.think) ?
         `<details class="think-box" style="margin-bottom:6px;"><summary>💭 思考过程（点击展开）</summary><div class="think-body">${escapeHtml(m.think)}</div></details>` : '';
-      div.innerHTML = `<div class="name">${escapeHtml(name)}${anch}<span class="msg-len">${(m.content || '').length}字</span></div>${thinkHtml}<div class="content">${escapeHtml(m.content)}</div><div class="msg-tools"><button class="copy-btn">📋 复制</button><button class="edit-btn">✏️ 编辑</button><button class="star-btn">${starBtn} 星标</button><button class="branch-btn">🌿 分支</button>${regenBtn}</div>`;
+      div.innerHTML = `<div class="name">${escapeHtml(name)}${anch}<span class="msg-len">${(m.content || '').length}字</span></div>${thinkHtml}<div class="content">${escapeHtml(m.content)}</div><div class="msg-tools"><button class="copy-btn">📋 复制</button><button class="save-btn">⭐ 收藏</button><button class="edit-btn">✏️ 编辑</button><button class="star-btn">${starBtn} 星标</button><button class="branch-btn">🌿 分支</button>${regenBtn}<button class="del-btn">🗑 删除</button></div>`;
     } else {
       div.textContent = m.content;
     }
@@ -748,6 +834,30 @@ function renderChat() {
     btn.addEventListener('click', () => {
       const idx = +btn.closest('.msg').dataset.idx;
       regenerate(idx);
+    });
+  });
+  // 删除（含其后所有消息，保持连贯）
+  box.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.closest('.msg').dataset.idx;
+      const m = msgs[idx];
+      const who = m.role === 'user' ? '你的消息' : 'AI 回复';
+      if (!confirm('删除这条' + who + '？\n\n它之后的所有消息也会一并删除。')) return;
+      msgs.splice(idx);
+      sessions[currentId].anchor = -1; anchorIdx = -1;
+      saveAll();
+      renderChat();
+      toast('已删除');
+    });
+  });
+  // 收藏到素材库
+  box.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.closest('.msg').dataset.idx;
+      const m = msgs[idx];
+      savedItems.unshift({ role: m.role, content: m.content, time: Date.now() });
+      saveAll();
+      toast('⭐ 已收藏到素材库');
     });
   });
   // 编辑
@@ -825,15 +935,63 @@ function renderPresetBar() {
     const on = sessPresets()[name] === true;
     const b = document.createElement('button');
     b.textContent = (on ? '✔ ' : '') + name;
-    b.style.cssText = `padding:3px 10px;border-radius:16px;border:1px solid ${on ? '#5a9cf8' : '#26395c'};background:${on ? '#1a3566' : '#101a2e'};color:${on ? '#5a9cf8' : '#8fa5c5'};font-size:12px;cursor:pointer;`;
+    b.style.cssText = `padding:3px 10px;border-radius:16px;border:1px solid ${on ? 'var(--accent)' : 'var(--line)'};background:${on ? 'var(--accent-soft)' : 'var(--bg2)'};color:${on ? 'var(--accent)' : 'var(--dim)'};font-size:12px;cursor:pointer;`;
     b.onclick = () => setSessPreset(name, !on);
     bar.appendChild(b);
   });
   renderPackTag();
 }
+// 📖 人物卡速查：激活的人物设定注入 AI 上下文（不进对话历史）
+function sessChars() { return sessions[currentId]?.chars || {}; }
+function setSessChar(name, on) {
+  if (!currentId) newSession();
+  if (!sessions[currentId].chars) sessions[currentId].chars = {};
+  sessions[currentId].chars[name] = on;
+  saveAll(); renderCharBar();
+  toast(on ? '📖 已注入「' + name + '」设定' : '已移除「' + name + '」');
+}
+function renderCharBar() {
+  const bar = document.getElementById('charBar');
+  if (!bar) return;
+  bar.innerHTML = '';
+  CHARACTER_CARDS.forEach(c => {
+    const on = sessChars()[c.name] === true;
+    const b = document.createElement('button');
+    b.textContent = (on ? '📖 ' : '') + c.name;
+    b.title = '点击注入/移除「' + c.name + '」设定';
+    b.style.cssText = `padding:3px 10px;border-radius:16px;border:1px solid ${on ? 'var(--gold)' : 'var(--line)'};background:${on ? 'rgba(217,180,91,.15)' : 'var(--bg3)'};color:${on ? 'var(--gold)' : 'var(--dim)'};font-size:12px;cursor:pointer;`;
+    b.onclick = () => setSessChar(c.name, !on);
+    bar.appendChild(b);
+  });
+}
 function renderPackTag() {
   const tag = document.getElementById('packTag');
   tag.textContent = activePack ? '📦 ' + activePack : '';
+}
+// 🎭 设定卡：多套「江霁月设定+风格+模式」一键切换
+function renderCardTag() {
+  const tag = document.getElementById('cardTag');
+  if (tag) tag.textContent = activeCard ? '🎭 ' + activeCard : '';
+}
+function openCardBar() {
+  const names = Object.keys(charCards);
+  if (!names.length) { toast('还没有设定卡，去 ⚙ 设置里添加'); return; }
+  const label = prompt('选择设定卡（输入序号或名称；清空=取消当前卡）\n' + names.map((n, i) => (i + 1) + '. ' + n).join('\n'));
+  if (label === null) return;
+  const t = label.trim();
+  if (t === '') { activeCard = ''; saveAll(); renderCardTag(); toast('已取消设定卡'); return; }
+  const byIdx = names[parseInt(t) - 1];
+  const chosen = byIdx || names.find(n => n === t);
+  if (!chosen) { toast('未找到该设定卡'); return; }
+  const card = charCards[chosen];
+  activeCard = chosen;
+  if (card.persona) persona = card.persona;
+  if (card.mode) currentMode = card.mode;
+  if (card.presets && typeof card.presets === 'object') Object.assign(presets, card.presets);
+  if (currentId) { sessions[currentId].mode = currentMode; }
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === currentMode));
+  saveAll(); renderPresetBar(); renderPackTag(); renderCardTag(); renderChat();
+  toast('已应用设定卡：' + chosen);
 }
 function openPackBar() {
   const names = Object.keys(stylePacks);
@@ -931,7 +1089,7 @@ async function send(promptArg, fromRegen) {
 
   const replyDiv = document.createElement('div');
   replyDiv.className = 'msg assistant';
-  const modelTag = model === 'deepseek-reasoner' ? ' <span style="font-size:11px;color:#d9b45b;border:1px solid #d9b45b;border-radius:8px;padding:0 6px;margin-left:6px;">🧠 深度思考</span>' : '';
+  const modelTag = model === 'deepseek-reasoner' ? ' <span style="font-size:11px;color:var(--gold);border:1px solid var(--gold);border-radius:8px;padding:0 6px;margin-left:6px;">🧠 深度思考</span>' : '';
   replyDiv.innerHTML = `<div class="name">${escapeHtml(assistantName())}${modelTag}</div>` +
     `<details class="think-box" style="display:none;"><summary>💭 思考过程（点击展开）</summary><div class="think-body"></div></details>` +
     `<div class="replyBody"><span class="status">思索中…</span></div>`;
@@ -1061,8 +1219,40 @@ function pushMsg(role, content, extra) {
   if (sessions[currentId].title === '新对话') {
     const t = content.slice(0, 12);
     sessions[currentId].title = t + '…';
+    if (role === 'user' && autoTitle && apiKey) generateTitle(content);
   }
   saveAll(); renderSessionList();
+}
+
+// 📝 自动标题：用快模型给新会话起名（非阻塞，失败静默回退）
+async function generateTitle(firstMsg) {
+  try {
+    const payload = {
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: '你是小说章节标题生成器。根据用户给出的小说片段或对话开头，生成一个简洁有韵味的标题。要求：不超过12个字，不要加书名号，不要解释，只输出标题本身。' },
+        { role: 'user', content: firstMsg.slice(0, 200) }
+      ],
+      max_tokens: 30,
+      temperature: 0.8,
+      stream: false
+    };
+    const resp = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) return;
+    const j = await resp.json();
+    let t = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content || '').trim().replace(/^["''「」【】]+|["''「」【】]+$/g, '');
+    t = t.split('\n')[0].trim().slice(0, 14);
+    if (!t || t.length < 2) return;
+    if (sessions[currentId]) {
+      sessions[currentId].title = t;
+      saveAll();
+      renderSessionList();
+    }
+  } catch (e) { /* 静默失败 */ }
 }
 
 /* ---------- 消息与系统提示组装 ---------- */
@@ -1080,6 +1270,11 @@ function buildSystem(mode) {
   // 女主设定补充
   if (persona) {
     sys += `\n\n【女主江霁月设定补充】${persona}`;
+  }
+  // 人物卡速查：会话中激活的人物设定注入
+  const onChars = CHARACTER_CARDS.filter(c => sessChars()[c.name] === true);
+  if (onChars.length) {
+    sys += '\n\n【已注入的人物设定】\n' + onChars.map(c => c.content).join('\n---\n');
   }
   // 作者风格档案
   if (styleProfile) {
@@ -1149,6 +1344,8 @@ function openSettings() {
   const pText = Object.entries(presets).map(([k, v]) => k + '|' + v).join('\n');
   document.getElementById('setPresets').value = pText;
   document.getElementById('setPacks').value = JSON.stringify(stylePacks, null, 2);
+  document.getElementById('setCards').value = JSON.stringify(charCards, null, 2);
+  document.getElementById('setAutoTitle').checked = autoTitle;
   document.getElementById('overlay').classList.add('show');
 }
 function closeSettings() { document.getElementById('overlay').classList.remove('show'); }
@@ -1172,15 +1369,82 @@ function saveSettings() {
     const p = JSON.parse(document.getElementById('setPacks').value || '{}');
     if (p && typeof p === 'object') stylePacks = p;
   } catch (e) { toast('风格包 JSON 格式有误：' + e.message); }
+  try {
+    const c = JSON.parse(document.getElementById('setCards').value || '{}');
+    if (c && typeof c === 'object') charCards = c;
+  } catch (e) { toast('设定卡 JSON 格式有误：' + e.message); }
+  autoTitle = document.getElementById('setAutoTitle').checked;
   document.getElementById('apiKey').value = apiKey;
   saveAll();
-  renderPresetBar(); renderPackTag(); renderNav();
+  renderPresetBar(); renderPackTag(); renderCardTag(); renderNav();
   closeSettings();
   toast('设置已保存');
 }
 function saveKey() {
   apiKey = document.getElementById('apiKey').value.trim();
   saveAll();
+}
+
+/* ---------- 备份 / 恢复 ---------- */
+function exportBackup() {
+  const data = {
+    app: '混沌之月写作台',
+    version: 1,
+    time: new Date().toISOString(),
+    sessions, apiKey, model, temp, persona, presets, stylePacks, activePack,
+    goalWords, dualMode, styleProfile, universe, theme, autoTitle, savedItems, charCards, activeCard
+  };
+  const blob = new Blob(['\ufeff' + JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = '混沌之月写作台备份_' + d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + '.json';
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast('已导出备份');
+}
+function importBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const d = JSON.parse(e.target.result.replace(/^\uFEFF/, ''));
+      if (!d || typeof d !== 'object' || !d.sessions) throw new Error('不是有效的备份文件');
+      if (!confirm('导入备份将覆盖当前所有写作窗口与设置，确定继续？')) { input.value = ''; return; }
+      sessions = d.sessions || {};
+      if (typeof d.apiKey === 'string') apiKey = d.apiKey;
+      if (d.model) model = d.model;
+      if (typeof d.temp === 'number') temp = d.temp;
+      if (typeof d.persona === 'string') persona = d.persona;
+      if (d.presets) presets = d.presets;
+      if (d.stylePacks) stylePacks = d.stylePacks;
+      if (typeof d.activePack === 'string') activePack = d.activePack;
+      if (typeof d.goalWords === 'number') goalWords = d.goalWords;
+      if (typeof d.dualMode === 'boolean') dualMode = d.dualMode;
+      if (typeof d.styleProfile === 'string') styleProfile = d.styleProfile;
+      if (typeof d.universe === 'string') universe = d.universe;
+      if (typeof d.theme === 'string') theme = d.theme;
+      if (typeof d.autoTitle === 'boolean') autoTitle = d.autoTitle;
+      if (Array.isArray(d.savedItems)) savedItems = d.savedItems;
+      if (d.charCards) charCards = d.charCards;
+      if (typeof d.activeCard === 'string') activeCard = d.activeCard;
+      saveAll();
+      currentId = Object.keys(sessions)[0] || null;
+      document.getElementById('apiKey').value = apiKey;
+      document.documentElement.setAttribute('data-theme', theme);
+      const sel = document.getElementById('themeSel'); if (sel) sel.value = theme;
+      const us = document.getElementById('universeSel'); if (us) us.value = universe;
+      renderSessionList(); renderPresetBar(); renderCharBar(); renderCardTag();
+      if (currentId) { currentMode = sessions[currentId].mode || 'write'; setMode(currentMode); }
+      else newSession();
+      toast('✅ 备份已导入');
+    } catch (err) {
+      toast('导入失败：' + err.message);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file, 'utf-8');
 }
 
 /* ---------- 导出当前会话为 TXT ---------- */
@@ -1229,6 +1493,7 @@ function branchAt(idx) {
     messages: base,
     draft: old.draft || '',
     presets: old.presets ? JSON.parse(JSON.stringify(old.presets)) : {},
+    chars: old.chars ? JSON.parse(JSON.stringify(old.chars)) : {},
     tags: (old.tags || []).slice(),
     anchor: -1
   };
@@ -1279,7 +1544,7 @@ function exportChat(fmt) {
   } else if (fmt === 'html') {
     ext = 'html';
     body = '<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><title>' + escapeHtml(s.title) + '</title>' +
-      '<style>body{max-width:720px;margin:40px auto;font-family:Georgia,"Songti SC",serif;line-height:1.9;color:#222;padding:0 16px}h1{text-align:center}.msg{margin:18px 0}.who{font-weight:bold;color:#7d5fd3}.ai{border-left:3px solid #ccc;padding-left:12px}</style></head><body><h1>' +
+      '<style>body{max-width:720px;margin:40px auto;font-family:Georgia,"Songti SC",serif;line-height:1.9;color:#222;padding:0 16px}h1{text-align:center}.msg{margin:18px 0}.who{font-weight:bold;color:var(--accent2)}.ai{border-left:3px solid #ccc;padding-left:12px}</style></head><body><h1>' +
       escapeHtml(s.title) + '</h1>' +
       s.messages.map(m => '<div class="msg ' + m.role + '"><div class="who">' + who(m) + '</div><div>' + escapeHtml(m.content).replace(/\n/g, '<br>') + '</div></div>').join('') +
       '</body></html>';
@@ -1312,7 +1577,7 @@ function renderStats() {
   msgs.forEach(m => { total += m.content.length; if (m.role === 'user') userC += m.content.length; else aiC += m.content.length; });
   const est = Math.round(total * 0.7 + (buildSystem(currentMode) || '').length * 0.7);
   const pct = Math.min(100, Math.round(est / 60000 * 100));
-  const barColor = pct > 85 ? '#e0574f' : pct > 60 ? '#d9b45b' : '#5a9cf8';
+  const barColor = pct > 85 ? 'var(--danger)' : pct > 60 ? 'var(--gold)' : 'var(--accent)';
   const modeName = currentMode === 'polish' ? '✨ 润色' : '✍️ 续写';
   document.getElementById('statsBody').innerHTML =
     '<div class="stat-card">' +
@@ -1324,10 +1589,10 @@ function renderStats() {
     '</div>' +
     '<div class="stat-card">' +
     '<div class="stat-row"><span>估算上下文用量</span><b>' + est.toLocaleString() + ' / 60k tokens（' + pct + '%）</b></div>' +
-    '<div style="height:8px;background:#22314d;border-radius:4px;margin-top:8px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:' + barColor + ';"></div></div>' +
-    (pct > 85 ? '<div class="stat-note" style="color:#e0574f;">⚠️ 快满了！建议开新对话，或用「🌿 分支」把长对话拆成新会话继续写。</div>' : '') +
+    '<div style="height:8px;background:var(--bar);border-radius:4px;margin-top:8px;overflow:hidden;"><div style="height:100%;width:' + pct + '%;background:' + barColor + ';"></div></div>' +
+    (pct > 85 ? '<div class="stat-note" style="color:var(--danger);">⚠️ 快满了！建议开新对话，或用「🌿 分支」把长对话拆成新会话继续写。</div>' : '') +
     '</div>' +
-    '<button onclick="showStats()" style="width:100%;background:#16233c;border:1px solid #26395c;color:#dbe6f5;border-radius:8px;padding:8px;cursor:pointer;font-size:13px;">📚 全书统计（所有窗口）</button>';
+    '<button onclick="showStats()" style="width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px;cursor:pointer;font-size:13px;">📚 全书统计（所有窗口）</button>';
 }
 
 /* ---------- ⚙️ 上下文用量提示条 ---------- */
@@ -1493,6 +1758,102 @@ function exportBook() {
   toast('已导出全书合集（' + ids.length + ' 章）');
 }
 
+/* ---------- 素材收藏 ---------- */
+function toggleSaved() {
+  const p = document.getElementById('savedPanel');
+  const open = p.style.right === '0px' || p.style.right === '0';
+  p.style.right = open ? '-440px' : '0px';
+  if (!open) renderSaved();
+}
+function openSaved() { toggleSaved(); }
+function renderSaved() {
+  const body = document.getElementById('savedBody');
+  if (!savedItems.length) {
+    body.innerHTML = '<div style="color:var(--dim);text-align:center;padding:30px 0;">还没有收藏。\n在聊天里点消息下方的「⭐ 收藏」保存灵感。</div>';
+    return;
+  }
+  let html = '';
+  savedItems.forEach((it, i) => {
+    const who = it.role === 'user' ? '你' : assistantName();
+    const d = new Date(it.time);
+    const date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    const snip = it.content.length > 120 ? it.content.slice(0, 120) + '…' : it.content;
+    html += `<div style="background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:11px;color:${it.role === 'user' ? 'var(--accent)' : 'var(--gold)'};font-weight:700;">${who} · ${date}</span>
+        <span>
+          <button onclick="useSaved(${i})" style="background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;margin-right:4px;">📋 插入</button>
+          <button onclick="delSaved(${i})" style="background:var(--bg3);border:1px solid var(--line);color:var(--danger);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;">删除</button>
+        </span>
+      </div>
+      <div style="white-space:pre-wrap;word-break:break-word;color:var(--txt);font-size:12.5px;line-height:1.6;">${escapeHtml(snip)}</div>
+    </div>`;
+  });
+  body.innerHTML = html;
+}
+function useSaved(i) {
+  const it = savedItems[i];
+  if (!it) return;
+  const ta = document.getElementById('prompt');
+  ta.value = (ta.value ? ta.value + '\n\n' : '') + it.content;
+  ta.focus();
+  toast('已插入输入框');
+}
+function delSaved(i) {
+  savedItems.splice(i, 1);
+  saveAll();
+  renderSaved();
+  toast('已删除收藏');
+}
+
+/* ---------- 人设一致性检查（雾崎/托雷基亚） ---------- */
+async function checkOOC() {
+  if (!currentId) return;
+  if (!apiKey) { toast('请先在右上角/设置里填 DeepSeek API Key'); openSettings(); return; }
+  const msgs = sessions[currentId].messages || [];
+  const recent = msgs.slice(-16);
+  if (!recent.length) { toast('先写几段再检查'); return; }
+  toast('🧹 正在检查人设一致性…');
+  const box = document.getElementById('chatBox');
+  const replyDiv = document.createElement('div');
+  replyDiv.className = 'msg assistant';
+  replyDiv.innerHTML = `<div class="name">🧹 人设检查</div><div class="replyBody"><span class="status">检查中…</span></div>`;
+  box.appendChild(replyDiv);
+  const replyBody = replyDiv.querySelector('.replyBody');
+  box.scrollTop = box.scrollHeight;
+
+  const convo = recent.map(m => (m.role === 'user' ? '【江霁月】' : '【雾崎/写手】') + m.content).join('\n\n');
+  const sys = `你是「混沌之月」（托雷基亚 × 江霁月）同人资深编辑，专门检查角色是否 OOC（崩人设）。\n\n【雾崎/托雷基亚人设核心】光之国蓝族科学家，堕入混沌的奥特曼，人间体「雾崎」。癫狂的好奇心、科学家的实验欲、偏执的占有欲、偶尔的脆弱与温柔；说话克制但字字有分量，不话痨、不直白甜腻、不轻易示弱（示弱必在关键时刻）；对江霁月有「观测者」式的痴迷与克制。未被洗白，仍认为混沌无错，只是学会克制。\n\n【检查任务】阅读下面的文字，找出雾崎/托雷基亚言行中不符合上述人设的地方。逐条输出：\n1. 引用的原话\n2. 哪里崩了（太甜腻/太话痨/太软弱/过于热情/说话方式不像他/逻辑OOC等）\n3. 建议改成什么\n如果没发现明显 OOC，就说明"人设基本一致"。最后给一句整体评价。`;
+  try {
+    const payload = {
+      model: model,
+      messages: [{ role: 'system', content: sys }, { role: 'user', content: convo }],
+      max_tokens: model === 'deepseek-reasoner' ? 8192 : 4096,
+      stream: false
+    };
+    if (model !== 'deepseek-reasoner') payload.temperature = temp;
+    const resp = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error('API错误 ' + resp.status + ': ' + err.slice(0, 200));
+    }
+    const j = await resp.json();
+    const text = (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '(无结果)';
+    replyBody.textContent = text;
+    pushMsg('assistant', '🧹 人设一致性检查：\n' + text);
+    saveAll();
+    renderChat();
+  } catch (e) {
+    replyDiv.remove();
+    renderChat();
+    toast('检查失败：' + e.message);
+  }
+}
+
 /* ---------- 平行宇宙开关 ---------- */
 function setUniverse(v) {
   universe = v;
@@ -1535,7 +1896,7 @@ function mdToHtml(s) {
   // 粗体 **x** -> <b>
   h = h.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
   // 行内代码 `x` -> <code>
-  h = h.replace(/`([^`]+)`/g, '<code style="color:#7ec8e3;background:#0b1220;padding:0 4px;border-radius:4px;">$1</code>');
+  h = h.replace(/`([^`]+)`/g, '<code style="color:var(--accent);background:var(--bg);padding:0 4px;border-radius:4px;">$1</code>');
   return h;
 }
 
@@ -1554,20 +1915,20 @@ function doSearch() {
   const kw = document.getElementById('searchInput').value.trim();
   const box = document.getElementById('searchResults');
   const msgs = sessions[currentId]?.messages || [];
-  if (!kw) { box.innerHTML = '<div style="color:#8fa5c5;">输入关键词搜索当前对话…</div>'; return; }
+  if (!kw) { box.innerHTML = '<div style="color:var(--dim);">输入关键词搜索当前对话…</div>'; return; }
   const hits = [];
   msgs.forEach(function(m, i) {
     if (m.role !== 'user' && m.role !== 'assistant') return;
     if (m.content && m.content.toLowerCase().indexOf(kw.toLowerCase()) >= 0) hits.push({ i: i, m: m });
   });
-  if (!hits.length) { box.innerHTML = '<div style="color:#8fa5c5;">没有找到包含「' + kw + '」的消息</div>'; return; }
-  let html = '<div style="color:#8fa5c5;margin-bottom:8px;">找到 ' + hits.length + ' 条：</div>';
+  if (!hits.length) { box.innerHTML = '<div style="color:var(--dim);">没有找到包含「' + kw + '」的消息</div>'; return; }
+  let html = '<div style="color:var(--dim);margin-bottom:8px;">找到 ' + hits.length + ' 条：</div>';
   hits.forEach(function(h) {
     const who = h.m.role === 'user' ? '你' : assistantName();
     const snippet = h.m.content.length > 120 ? h.m.content.slice(0, 120) + '…' : h.m.content;
     html += '<div class="search-item" onclick="jumpToMsg(' + h.i + ')">'
-      + '<div style="color:' + (h.m.role === 'user' ? '#5a9cf8' : '#d9b45b') + ';font-weight:bold;font-size:12px;margin-bottom:3px;">' + who + ' · 第' + (h.i + 1) + '条</div>'
-      + '<div style="color:#dbe6f5;">' + escapeHtml(snippet) + '</div></div>';
+      + '<div style="color:' + (h.m.role === 'user' ? 'var(--accent)' : 'var(--gold)') + ';font-weight:bold;font-size:12px;margin-bottom:3px;">' + who + ' · 第' + (h.i + 1) + '条</div>'
+      + '<div style="color:var(--txt);">' + escapeHtml(snippet) + '</div></div>';
   });
   box.innerHTML = html;
 }
@@ -1576,7 +1937,7 @@ function jumpToMsg(idx) {
   const all = box.querySelectorAll('.msg');
   const target = all[idx];
   if (target) {
-    target.style.outline = '2px solid #d9b45b';
+    target.style.outline = '2px solid var(--gold)';
     target.style.outlineOffset = '2px';
     target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(function(){ target.style.outline = 'none'; }, 2000);
@@ -1607,7 +1968,7 @@ init();
     <b>🔍 搜索聊天记录</b>
     <button onclick="togglePanel('searchPanel')">✕ 关闭</button>
   </div>
-  <input id="searchInput" placeholder="输入关键词，搜你发的和AI生成的…" oninput="doSearch()" style="width:100%;background:#16233c;border:1px solid #26395c;color:#dbe6f5;border-radius:8px;padding:8px 12px;font-size:14px;margin-bottom:10px;">
+  <input id="searchInput" placeholder="输入关键词，搜你发的和AI生成的…" oninput="doSearch()" style="width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 12px;font-size:14px;margin-bottom:10px;">
   <div id="searchResults" style="font-size:13px;"></div>
 </div>
 
@@ -1622,9 +1983,19 @@ init();
 <div id="statsPanel">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
     <h3 style="margin:0;">📈 会话统计</h3>
-    <button onclick="toggleStats()" style="background:#16233c;border:1px solid #26395c;color:#dbe6f5;border-radius:8px;padding:4px 10px;cursor:pointer;">✕ 关闭</button>
+    <button onclick="toggleStats()" style="background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:4px 10px;cursor:pointer;">✕ 关闭</button>
   </div>
   <div id="statsBody"></div>
+</div>
+
+<!-- 素材收藏面板 -->
+<div id="savedPanel" style="position:fixed;top:0;right:-440px;width:420px;max-width:94vw;height:100%;background:var(--bg2);border-left:1px solid var(--line);z-index:75;transition:right .3s;overflow-y:auto;padding:14px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <b style="color:var(--gold);">⭐ 素材收藏</b>
+    <button onclick="toggleSaved()" style="background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:4px 10px;cursor:pointer;">✕ 关闭</button>
+  </div>
+  <div style="font-size:12px;color:var(--dim);margin-bottom:10px;">在聊天里点消息的「⭐ 收藏」按钮保存；点收藏项可复制或插入输入框。</div>
+  <div id="savedBody" style="font-size:13px;"></div>
 </div>
 
 <script>
