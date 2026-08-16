@@ -183,7 +183,7 @@ body {
   #apiKey { width: 120px; }
 }
 /* ---------- 消息工具栏（复制/编辑/星标/分支/重写） ---------- */
-.msg .msg-tools { margin-top: 6px; display: flex; gap: 6px; opacity: .45; transition: opacity .2s; flex-wrap: wrap; }
+.msg .msg-tools { margin-top: 6px; display: flex; gap: 6px; opacity: .75; transition: opacity .2s; flex-wrap: wrap; }
 .msg:hover .msg-tools { opacity: 1; }
 @media (hover: none) { .msg .msg-tools { opacity: 1; } }
 .msg .msg-tools button { background: none; border: 1px solid var(--line); color: var(--dim); border-radius: 8px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
@@ -990,7 +990,7 @@ function renderChat() {
       const name = m.role === 'user' ? '你' : assistantName();
       const anch = `<span class="anch" title="设为续写锚点（从此处往后续写）" onclick="setAnchor(${idx})">⛓</span>`;
       const starBtn = m.star ? '★' : '☆';
-      const regenBtn = m.role === 'assistant' ? '<button class="regen-btn">🔄 重写</button>' : '';
+      const regenBtn = '<button class="regen-btn">🔄 重写</button>';
       const thinkHtml = (m.role === 'assistant' && m.think) ?
         `<details class="think-box" style="margin-bottom:6px;"><summary>💭 思考过程（点击展开）</summary><div class="think-body">${escapeHtml(m.think)}</div></details>` : '';
       div.innerHTML = `<div class="name">${escapeHtml(name)}${anch}<span class="msg-len">${(m.content || '').length}字</span></div>${thinkHtml}<div class="content">${escapeHtml(m.content)}</div><div class="msg-tools"><button class="copy-btn">📋 复制</button><button class="save-btn">⭐ 收藏</button><button class="edit-btn">✏️ 编辑</button><button class="star-btn">${starBtn} 星标</button><button class="branch-btn">🌿 分支</button>${regenBtn}<button class="del-btn">🗑 删除</button></div>`;
@@ -1846,16 +1846,25 @@ function regenerate(idx) {
   if (!currentId) return;
   const msgs = sessions[currentId].messages;
   if (!msgs || idx >= msgs.length) return;
+  const target = msgs[idx];
   let lastUser = null;
-  for (let i = idx - 1; i >= 0; i--) {
-    if (msgs[i].role === 'user') { lastUser = msgs[i].content; break; }
+  let isUserMsg = false;
+  if (target.role === 'user') {
+    // 用户消息：重写=删掉它及其后，用这条消息内容重新发送（需要重新 push）
+    lastUser = target.content;
+    isUserMsg = true;
+  } else {
+    // AI 回复：找它前面最近的用户消息（该消息还在历史里，无需重新 push）
+    for (let i = idx - 1; i >= 0; i--) {
+      if (msgs[i].role === 'user') { lastUser = msgs[i].content; break; }
+    }
   }
   if (lastUser == null) { toast('找不到可重新生成的上文'); return; }
   msgs.splice(idx); // 删除该条及之后所有消息
   sessions[currentId].anchor = -1; anchorIdx = -1;
   saveAll();
   renderChat();
-  send(lastUser, true); // fromRegen=true：不重复追加用户消息
+  send(lastUser, !isUserMsg); // fromRegen：AI回复重写=true（不重复push）；用户消息重写=false（重新push）
 }
 
 /* ---------- 📤 导出菜单（txt / md / html） ---------- */

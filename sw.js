@@ -1,5 +1,5 @@
 // 混沌之月 · 霁月之旅写作台 — Service Worker
-const CACHE = 'chundun-v1';
+const CACHE = 'chundun-v2';
 const CORE = [
   './',
   './index.html',
