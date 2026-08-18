@@ -1,0 +1,7 @@
+# 本地工具与辅助文件（不推送到 GitHub Pages 仓库）
+_tools/
+使用小抄.html
+使用小抄.md
+*写作台.html
+*.html.sw.js
+*.apk
